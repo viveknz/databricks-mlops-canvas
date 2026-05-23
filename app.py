@@ -62,32 +62,37 @@ def parse_module_quiz(filepath):
     return quiz_questions
 
 def get_ai_response(user_text, active_module, module_markdown_content):
-    """Uses a real, live LLM to dynamically answer questions based on the active lecture content."""
-    # Ensure a key is provided in Streamlit Secrets
+    """Uses a live LLM locked down strictly to the provided lecture course content."""
     if "GEMINI_API_KEY" not in st.secrets:
         return "⚠️ Please set up your `GEMINI_API_KEY` in the Streamlit Cloud settings to activate the live AI tutor!"
     
     try:
-        # Initialize the official Google GenAI client
         client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
         
-        # Give the AI strict persona rules to act as a plain-English tutor
+        # We rewrite the prompt to use strict conditional guardrails
         system_prompt = (
-            f"You are an elite, supportive MLOps instructor teaching a student about '{active_module}' on Databricks.\n"
-            f"The student is currently reading this specific source material:\n"
-            f"--- \n{module_markdown_content}\n ---\n"
-            "Your goal is to answer their questions using incredibly clear, plain English. "
-            "Avoid massive walls of complex code unless explicitly asked. "
-            "Use vibrant, real-world analogies (like kitchens, factories, or assembly lines) to explain abstract ideas."
+            f"ROLE & BOUNDARY POLICY:\n"
+            f"You are a strict technical AI tutor for an enterprise course module: '{active_module}'.\n"
+            f"You have access to the ONLY valid source material you are allowed to discuss:\n"
+            f"--- \n{module_markdown_content}\n ---\n\n"
+            "CRITICAL SECURITY INSTRUCTIONS:\n"
+            "1. You are under absolute lockdown. You are completely forbidden from answering questions about general topics, "
+            "pop culture, spelling, coding languages outside this context, math riddles, or unrelated trivia.\n"
+            "2. If the user's question cannot be reasonably linked to Databricks, machine learning pipelines, or the text "
+            "provided in the source material above, you must refuse to answer.\n"
+            "3. Your refusal response must be polite but firm, stating exactly: "
+            "'I can only assist you with questions directly related to this specific Databricks MLOps module content. "
+            "Please ask a question about the active lecture material.'\n"
+            "4. For valid questions, explain using clear plain English and helpful architectural analogies."
         )
         
-        # Generate the response using the fast, intelligent flash model
         response = client.models.generate_content(
             model='gemini-2.5-flash',
             contents=user_text,
             config=types.GenerateContentConfig(
                 system_instruction=system_prompt,
-                temperature=0.7,
+                # Setting temperature lower (0.2) reduces creative deviation and makes guardrails sharper
+                temperature=0.2, 
             )
         )
         return response.text
