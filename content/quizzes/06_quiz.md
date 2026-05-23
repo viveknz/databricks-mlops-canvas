@@ -1,0 +1,2 @@
+What is a Model Serving Endpoint? | A clean data table in Delta Lake | A secure unique web address (URL) where applications can request predictions | A local file path on your computer | A secure unique web address (URL) where applications can request predictions
+What does 'Autoscaling' do for an active endpoint? | It changes the accuracy metric of your model | It scales up server capacity under heavy traffic and downsizes it when traffic drops | It deletes old code files automatically | It scales up server capacity under heavy traffic and downsizes it when traffic drops

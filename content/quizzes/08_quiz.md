@@ -1,0 +1,2 @@
+What does the 'CI' in CI/CD focus on? | Automatically deploying models to web servers | Automatically testing code updates for bugs and errors | Writing markdown documentation files | Automatically testing code updates for bugs and errors
+What does a 'Rollback' strategy allow you to do? | Permanently delete your GitHub profile | Instantly restore the previous stable version if an update fails in production | Manually write code using an offline IDE | Instantly restore the previous stable version if an update fails in production

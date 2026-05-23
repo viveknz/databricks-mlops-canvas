@@ -1,0 +1,2 @@
+What are Databricks compute clusters? | Collaborative word documents | Groups of cloud computers working together to provide processing power | Folders used to store raw text files | Groups of cloud computers working together to provide processing power
+Which Databricks component ensures your storage tables are clean and version-controlled? | Delta Lake | Notebook UI | Git Folders | Delta Lake

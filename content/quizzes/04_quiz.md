@@ -1,0 +1,2 @@
+What does it mean to 'Register' a model in MLflow? | Saving the raw files into a cloud closet | Placing the model into a central catalog with an official version and status tag | Deleting old experiments to free up space | Placing the model into a central catalog with an official version and status tag
+What are model artifacts? | The raw markdown documentation files | The physical files containing the patterns a model learned during training | The errors thrown by your python interpreter | The physical files containing the patterns a model learned during training

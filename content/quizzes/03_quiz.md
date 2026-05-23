@@ -1,0 +1,2 @@
+What is the primary function of MLflow? | To automatically clean dirty datasets | To log parameters, metrics, and versions of your experiments | To host your live mobile application | To log parameters, metrics, and versions of your experiments
+What is an example of an MLflow Parameter? | A model's final test accuracy score | An initial setup knob or configuration choice | A saved file package | An initial setup knob or configuration choice

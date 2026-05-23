@@ -1,0 +1,2 @@
+Which table stores every live request and prediction made by an endpoint for monitoring purposes? | Baseline Table | Inference Table | Configuration Bundle Table | Inference Table
+How does Databricks Lakehouse Monitoring save engineering time? | It writes your training algorithms for you | It provides built-in automated tracking of drift metrics and dashboards | It lets you bypass GitHub entirely | It provides built-in automated tracking of drift metrics and dashboards

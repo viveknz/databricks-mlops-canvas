@@ -1,2 +1,3 @@
-What is the primary role of MLOps? | To automate coding styles | To bridge the gap between model building and production reliability | To design raw websites | To bridge the gap between model building and production reliability
-Which group does MLOps bring together? | Data Scientists & Software Engineers | HR & Sales Teams | Web Designers & UX Writers | Data Scientists & Software Engineers
+What does the 'Ops' in MLOps stand for? | Operations | Optimization | Options | Operations
+Which analogy best describes an MLOps infrastructure? | A master chef inventing a recipe | The restaurant supply chain and health inspectors | A painting hanging in a museum gallery | The restaurant supply chain and health inspectors
+What is a major risk of running a machine learning model without MLOps? | The model will use too much storage space | The model can quietly fail or become inaccurate over time without anyone knowing | Data scientists will have to write code in SQL | The model can quietly fail or become inaccurate over time without anyone knowing

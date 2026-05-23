@@ -1,0 +1,2 @@
+What is the core benefit of Databricks Asset Bundles (DABs)? | It lets you build model training algorithms faster | It packages code, assets, and infrastructure setup into a structured, transportable box | It cleans your dirty data tables using SQL | It packages code, assets, and infrastructure setup into a structured, transportable box
+Defining your system configurations via text files rather than user interface clicks is called: | Infrastructure as Code | Continuous Integration | Real-time Serving | Infrastructure as Code

@@ -1,0 +1,2 @@
+Which serving architecture is best for real-time credit card fraud detection? | Batch Serving | Real-time Endpoint Serving | Asset Bundle Compiling | Real-time Endpoint Serving
+When would you typically use Batch Serving? | When processing millions of rows overnight where instant speed isn't required | When an application needs a prediction within a millisecond | When you are writing a python script in a notebook | When processing millions of rows overnight where instant speed isn't required
