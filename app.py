@@ -87,7 +87,7 @@ def get_ai_response(user_text, active_module):
             "To wrap your head around this concept in plain English, just remember that its main job "
             "is to make your machine learning workflow predictable, repeatable, and safe for production apps."
         )
-        
+
 # --- APP SYSTEM STATE TRACKER ---
 discovered_coursework = discover_modules()
 
@@ -168,7 +168,8 @@ with tab_chat:
             track_history.append({"role": "user", "content": input_text})
             
             # Context-aware simulated assistant logic
-            simulated_response = f"Analyzing your inquiry regarding **{st.session_state.active_track}**: Conceptually, this phase removes complexity and human error. It creates an isolated, automated safety layer so your system runs without manual friction."
+            simulated_response = get_ai_response(input_text, st.session_state.active_track)
+            #simulated_response = f"Analyzing your inquiry regarding **{st.session_state.active_track}**: Conceptually, this phase removes complexity and human error. It creates an isolated, automated safety layer so your system runs without manual friction."
             
             track_history.append({"role": "assistant", "content": simulated_response})
             st.rerun()
