@@ -1,33 +1,19 @@
-import streamlit as str
-import random
+import streamlit as st
 
-# --- CONFIGURATION & STYLING ---
-str.set_page_config(layout="wide", page_title="Databricks MLOps Academy")
+# --- INITIALIZATION & LAYOUT CONFIG ---
+st.set_page_config(layout="wide", page_title="Databricks MLOps Academy")
 
-# Custom CSS to mimic a clean, scannable Canvas environment
-str.markdown("""
-<style>
-    .reportview-container { background: #f5f7f8; }
-    .stDeployButton { display:none; }
-    footer { visibility: hidden; }
-    .main-header { font-size: 32px; font-weight: 700; color: #1b2a47; margin-bottom: 20px; }
-    .section-box { padding: 20px; background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 15px; }
-    .chat-bubble-user { background-color: #e2f0fd; padding: 12px; border-radius: 10px; margin: 5px 0; text-align: right; }
-    .chat-bubble-bot { background-color: #f1f3f4; padding: 12px; border-radius: 10px; margin: 5px 0; text-align: left; }
-</style>
-""", unsafe_allowed_html=True)
+# Initialize persistent session states
+if 'current_module' not in st.session_state:
+    st.session_state.current_module = "1. Introduction to MLOps"
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+if 'quiz_score' not in st.session_state:
+    st.session_state.quiz_score = None
+if 'user_answers' not in st.session_state:
+    st.session_state.user_answers = {}
 
-# --- APPLICATION STATE INITIALIZATION ---
-if 'current_module' not in str.session_state:
-    str.session_state.current_module = "1. Introduction to MLOps"
-if 'chat_history' not in str.session_state:
-    str.session_state.chat_history = []
-if 'quiz_score' not in str.session_state:
-    str.session_state.quiz_score = None
-if 'user_answers' not in str.session_state:
-    str.session_state.user_answers = {}
-
-# --- SYLLABUS DATA (Plain English Content) ---
+# --- PLAIN ENGLISH CURRICULUM DATA ---
 COURSE_MODULES = {
     "1. Introduction to MLOps": {
         "summary": "MLOps is simply 'DevOps for Machine Learning'. While data science focuses on building a model, MLOps provides the safety nets, automation, and structure to ensure that the model actually runs reliably in production without breaking.",
@@ -54,27 +40,27 @@ COURSE_MODULES = {
         "analogy": "Real-time serving is like an automated drive-thru window: an application drops off data, and the model instantly hands back a prediction. Batch serving is like mail delivery: you pile up a thousand letters, and process them all in one big trip once a day.",
         "keywords": ["Real-time", "Batch Processing", "API", "Latency"]
     },
-    "6. Deploying serving endpoints": {
+    "6. Deploying model serving endpoint": {
         "summary": "An endpoint is the physical web address where your serving architecture lives. Deploying it means making that address active so apps can securely send data and receive predictions over HTTPS.",
         "analogy": "It's like turning on a store's telephone hotline. Once deployed, anyone with the correct phone number (the endpoint URL) and permission can call up and ask the model questions.",
         "keywords": ["Endpoint URL", "Payload", "JSON response", "Scaling"]
     },
-    "7. Databricks Asset Bundles (DABs)": {
+    "7. Databricks Asset Bundles": {
         "summary": "Databricks Asset Bundles allow you to bundle all your code, notebooks, test settings, and infrastructure configs into a single, structured project package. This makes moving code across different spaces predictable.",
         "analogy": "Imagine you are moving houses. Instead of carrying individual clothes, books, and plates loosely in your arms, you pack them cleanly into a standard moving crate. DABs are that moving crate for your machine learning project.",
         "keywords": ["Infrastructure as Code", "Project Structure", "Configuration", "DABs"]
     },
-    "8. CI/CD & Deployment Strategies": {
+    "8. CI/CD and deployment strategies": {
         "summary": "CI/CD (Continuous Integration & Continuous Deployment) means using automated rules to test and ship code. Instead of manually clicking deploy, a robot automatically checks your work for errors every time you update it.",
         "analogy": "It's like an automated factory assembly line. Before a car leaves the factory, automated arms shake the doors and test the brakes. If anything fails, the line stops automatically before the broken car can reach a customer.",
         "keywords": ["GitHub Actions", "Automation", "Unit Testing", "Rollback"]
     },
-    "9. Intro to Monitoring": {
+    "9. Intro to monitoring": {
         "summary": "Once a model goes live, it encounters real-world data, which constantly changes. Monitoring means tracking the incoming data and the model’s answers to ensure the model isn't slowly losing its accuracy.",
         "analogy": "Imagine you train a weather bot in winter, and suddenly summer arrives. The data looks completely different. Monitoring is the alarm system that rings when your bot starts making weird summer predictions based on winter logic.",
         "keywords": ["Data Drift", "Model Decay", "Alerts", "Performance"]
     },
-    "10. Lakehouse Monitoring": {
+    "10. Lakehouse monitoring": {
         "summary": "Lakehouse Monitoring is Databricks' built-in tool that automatically hooks into your data tables. It looks at your training data and compares it directly with real-time production tables to spot shifts without you writing complex tracking code.",
         "analogy": "It is like having a dedicated auditor standing right next to your data pipeline 24/7, continuously running math equations to verify that today's data looks just as healthy as yesterday's data.",
         "keywords": ["Dashboard", "Baseline Table", "Drift Metrics", "Inference Tables"]
@@ -103,119 +89,98 @@ QUIZ_QUESTIONS = [
     }
 ]
 
-# --- RESPONSIVE AI CHAT SIMULATOR (Plain English Logic) ---
+# --- TEXT SIMULATION ENGINE ---
 def get_ai_response(user_text, active_module):
     text_lower = user_text.lower()
     module_data = COURSE_MODULES[active_module]
     
     if "why" in text_lower or "purpose" in text_lower:
-        return f"The main purpose of **{active_module}** is to solve a specific friction point: it keeps your work stable and predictable. Without it, you run into environments where code works on one person's machine but breaks instantly when launched live."
+        return f"The main purpose of **{active_module}** is stability. It prevents the common friction point where a machine learning system works fine on an individual's machine but breaks instantly when launched live."
     elif "example" in text_lower or "analogy" in text_lower:
         return f"Here is another way to picture it: {module_data['analogy']}"
-    elif "code" in text_lower or "syntax" in text_lower:
-        return f"We're keeping things plain-English here on the canvas! But conceptually, Databricks handles this behind the scenes using clear configuration parameters. You don't need to write lines of raw infra setup; you just reference your target workspace keywords: {', '.join(module_data['keywords'])}."
     else:
-        return f"That's a great question about **{active_module}**. In simple terms, remember that this component focuses directly on managing your {module_data['keywords'][0].lower()} and {module_data['keywords'][1].lower()} seamlessly so production systems remain safe."
+        return f"Regarding **{active_module}**: This layer fundamentally centers on safeguarding your operational system while managing {module_data['keywords'][0].lower()} and {module_data['keywords'][1].lower()} safely."
 
-# --- APP LAYOUT ---
-str.markdown("<div class='main-header'>🎓 Databricks MLOps Canvas Academy</div>", unsafe_allowed_html=True)
+# --- APP INTERFACE BUILD ---
+st.title("🎓 Databricks MLOps Canvas Academy")
+st.write("---")
 
-# Split screen workspace layout (Canvas Design)
-left_col, right_col = str.columns([2, 3], gap="large")
+# Setup layout columns
+left_col, right_col = st.columns([2, 3], gap="large")
 
-# ==========================================
-# LEFT PANEL: MODULE EXPLORER
-# ==========================================
+# Left Column: Navigation Sidebar Panel
 with left_col:
-    str.markdown("<h3 style='color: #2c3e50;'>🗺️ Module Navigator</h3>", unsafe_allowed_html=True)
-    str.write("Select a topic from the course playlist to load its concept blueprint onto the main workspace canvas.")
+    st.header("🗺️ Module Navigator")
+    st.caption("Select a topic below to explore its plain-English blueprint on the right.")
     
-    # Create interactive list of modules
     for mod_title in COURSE_MODULES.keys():
-        if str.button(mod_title, use_container_width=True, type="secondary" if str.session_state.current_module != mod_title else "primary"):
-            str.session_state.current_module = mod_title
-            str.rerun()
-            
-    str.markdown("---")
-    str.caption("💡 Tip: Walk through the items sequentially from Introduction down to Lakehouse Monitoring to see how a model travels from an idea to production.")
+        is_active = (st.session_state.current_module == mod_title)
+        if st.button(mod_title, use_container_width=True, type="primary" if is_active else "secondary"):
+            st.session_state.current_module = mod_title
+            st.rerun()
 
-# ==========================================
-# RIGHT PANEL: INTERACTIVE PLAYGROUND
-# ==========================================
+# Right Column: The Core Content Canvas Workspace
 with right_col:
-    # Setup interactive view tabs
-    tab_explain, tab_chat, tab_quiz = str.tabs(["📖 Concept Explanation", "💬 Ask Questions", "🧠 Quiz Me"])
+    tab_explain, tab_chat, tab_quiz = st.tabs(["📖 Plain-English Concept", "💬 Ask Questions", "🧠 Quiz Me"])
+    selected_data = COURSE_MODULES[st.session_state.current_module]
     
-    selected_data = COURSE_MODULES[str.session_state.current_module]
-    
-    # --- TAB 1: PLAIN ENGLISH EXPLANATION ---
+    # 1. Explanation Panel
     with tab_explain:
-        str.markdown(f"<div class='section-box'><h3>Active Concept: {str.session_state.current_module}</h3></div>", unsafe_allowed_html=True)
+        st.subheader(st.session_state.current_module)
         
-        str.markdown("#### 🔍 What is this in Plain English?")
-        str.write(selected_data["summary"])
+        st.markdown("### 🔍 What is this?")
+        st.write(selected_data["summary"])
         
-        str.markdown("#### 💡 Real-World Analogy")
-        str.info(selected_data["analogy"])
+        st.markdown("### 💡 Real-World Analogy")
+        st.info(selected_data["analogy"])
         
-        str.markdown("#### 🔑 Key Pillars to Remember")
-        cols = str.columns(len(selected_data["keywords"]))
-        for idx, kw in enumerate(selected_data["keywords"]):
-            cols[idx].markdown(f"**• {kw}**")
+        st.markdown("### 🔑 Key Concepts")
+        for kw in selected_data["keywords"]:
+            st.markdown(f"**• {kw}**")
             
-    # --- TAB 2: INTERACTIVE Q&A ---
+    # 2. Plain English Chat Panel
     with tab_chat:
-        str.markdown(f"### 💬 Conversational Tutor")
-        str.caption(f"Ask any question about **{str.session_state.current_module}** using plain language.")
+        st.subheader("💬 Interactive Explanations")
+        st.caption(f"Ask anything about '{st.session_state.current_module}' without worrying about technical jargon.")
         
-        # Display Conversational Canvas history
-        for msg in str.session_state.chat_history:
+        # Render historical interaction logs
+        for msg in st.session_state.chat_history:
             if msg["role"] == "user":
-                str.markdown(f"<div class='chat-bubble-user'><b>You:</b> {msg['content']}</div>", unsafe_allowed_html=True)
+                st.chat_message("user").write(msg["content"])
             else:
-                str.markdown(f"<div class='chat-bubble-bot'><b>Tutor:</b> {msg['content']}</div>", unsafe_allowed_html=True)
+                st.chat_message("assistant").write(msg["content"])
                 
-        # Handle chat inputs
-        with str.form(key="chat_input_form", clear_on_submit=True):
-            user_query = str.text_input("Ask a question (e.g., 'Why do we need this?', 'Give me an analogy'):", placeholder="Type your question here...")
-            submit_query = str.form_submit_button("Send Query")
-            
-            if submit_query and user_query:
-                str.session_state.chat_history.append({"role": "user", "content": user_query})
-                bot_ans = get_ai_response(user_query, str.session_state.current_module)
-                str.session_state.chat_history.append({"role": "bot", "content": bot_ans})
-                str.rerun()
+        # Question input structure
+        with st.form(key="chat_form", clear_on_submit=True):
+            user_query = st.text_input("Your question:", placeholder="e.g., 'Give me an analogy' or 'Why do we need this?'")
+            if st.form_submit_button("Ask Tutor"):
+                if user_query.strip():
+                    st.session_state.chat_history.append({"role": "user", "content": user_query})
+                    answer = get_ai_response(user_query, st.session_state.current_module)
+                    st.session_state.chat_history.append({"role": "bot", "content": answer})
+                    st.rerun()
 
-    # --- TAB 3: QUIZ ENGINE ---
+    # 3. Quiz Module Panel
     with tab_quiz:
-        str.markdown("### 🧠 Conceptual Check-In")
-        str.write("Test your understanding of the Databricks MLOps lifecycle with this conceptual quiz.")
+        st.subheader("🧠 Concept Check-In")
+        st.write("Test your understanding of the core concepts.")
         
-        # Render quiz forms inside canvas block
-        with str.form(key="quiz_evaluation_form"):
+        with st.form(key="quiz_form"):
             for q in QUIZ_QUESTIONS:
-                str.markdown(f"**Question {q['id']}:** {q['question']}")
-                str.session_state.user_answers[q['id']] = str.radio(
-                    "Select your answer:", 
-                    options=q['options'], 
-                    key=f"q_radio_{q['id']}",
-                    label_visibility="collapsed"
+                st.write(f"**Question {q['id']}:** {q['question']}")
+                st.session_state.user_answers[q['id']] = st.radio(
+                    "Choose one:", options=q['options'], key=f"ans_{q['id']}", label_visibility="collapsed"
                 )
-                str.markdown("<br>", unsafe_allowed_html=True)
+                st.write("")
                 
-            submit_quiz = str.form_submit_button("Submit My Answers")
-            
-            if submit_quiz:
-                correct_count = 0
-                for q in QUIZ_QUESTIONS:
-                    if str.session_state.user_answers[q['id']] == q['correct']:
-                        correct_count += 1
-                str.session_state.quiz_score = f"{correct_count} / {len(QUIZ_QUESTIONS)}"
+            if st.form_submit_button("Submit Quiz"):
+                score = sum(1 for q in QUIZ_QUESTIONS if st.session_state.user_answers[q['id']] == q['correct'])
+                st.session_state.quiz_score = f"{score} / {len(QUIZ_QUESTIONS)}"
                 
-        if str.session_state.quiz_score is not None:
-            str.markdown("---")
-            str.markdown(f"### 📊 Result: Your Score is `{str.session_state.quiz_score}`")
-            if "3" in str.session_state.quiz_score:
-                str.success("Perfect score! You've mastered the core architectural concepts of Databricks MLOps.")
+        if st.session_state.quiz_score is not None:
+            st.markdown("---")
+            st.metric("Your Score", st.session_state.quiz_score)
+            if "3" in st.session_state.quiz_score:
+                st.success("Excellent work! You perfectly grasp how models move from tracking to live deployment environments.")
             else:
-                str.warning("You missed a few spots. Toggle back to the 'Concept Explanation' or explore other modules on the left to brush up on the fundamentals!")
+                st.warning("Take another look through the module explanations on the left side to master these concepts!")
