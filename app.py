@@ -1,6 +1,7 @@
 import streamlit as st
 import os
 import glob
+from google import genai
 
 # --- MULTI-PAGE LAYOUT INITIALIZATION ---
 st.set_page_config(
@@ -59,6 +60,34 @@ def parse_module_quiz(filepath):
                         })
     return quiz_questions
 
+def get_ai_response(user_text, active_module):
+    """Processes plain-English student inquiries with targeted context-aware logic."""
+    text_lower = user_text.lower()
+    
+    # Rule 1: Handle requests for basic purpose
+    if "why" in text_lower or "purpose" in text_lower or "use case" in text_lower:
+        return (
+            f"The core purpose of **{active_module}** is to remove manual steps and human error. "
+            "In enterprise MLOps, if a process relies on an engineer manually clicking a button or copying a file path, "
+            "it will eventually break. This module creates a standardized, automated safety net."
+        )
+    
+    # Rule 2: Handle requests for visualization/analogies
+    elif "analogy" in text_lower or "example" in text_lower or "picture" in text_lower:
+        return (
+            f"Think of **{active_module}** like a high-tech factory assembly line. "
+            "Instead of builders hand-crafting parts in separate rooms, everything moves down a single, "
+            "monitored conveyer belt. If a part is flawed, the line stops automatically before the product ships."
+        )
+        
+    # Rule 3: Default fallback instructor response
+    else:
+        return (
+            f"That is a great question regarding **{active_module}**. "
+            "To wrap your head around this concept in plain English, just remember that its main job "
+            "is to make your machine learning workflow predictable, repeatable, and safe for production apps."
+        )
+        
 # --- APP SYSTEM STATE TRACKER ---
 discovered_coursework = discover_modules()
 
