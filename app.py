@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import glob
 from google import genai
+from google.genai import types
 
 # --- MULTI-PAGE LAYOUT INITIALIZATION ---
 st.set_page_config(
@@ -60,33 +61,38 @@ def parse_module_quiz(filepath):
                         })
     return quiz_questions
 
-def get_ai_response(user_text, active_module):
-    """Processes plain-English student inquiries with targeted context-aware logic."""
-    text_lower = user_text.lower()
+def get_ai_response(user_text, active_module, module_markdown_content):
+    """Uses a real, live LLM to dynamically answer questions based on the active lecture content."""
+    # Ensure a key is provided in Streamlit Secrets
+    if "GEMINI_API_KEY" not in st.secrets:
+        return "⚠️ Please set up your `GEMINI_API_KEY` in the Streamlit Cloud settings to activate the live AI tutor!"
     
-    # Rule 1: Handle requests for basic purpose
-    if "why" in text_lower or "purpose" in text_lower or "use case" in text_lower:
-        return (
-            f"The core purpose of **{active_module}** is to remove manual steps and human error. "
-            "In enterprise MLOps, if a process relies on an engineer manually clicking a button or copying a file path, "
-            "it will eventually break. This module creates a standardized, automated safety net."
-        )
-    
-    # Rule 2: Handle requests for visualization/analogies
-    elif "analogy" in text_lower or "example" in text_lower or "picture" in text_lower:
-        return (
-            f"Think of **{active_module}** like a high-tech factory assembly line. "
-            "Instead of builders hand-crafting parts in separate rooms, everything moves down a single, "
-            "monitored conveyer belt. If a part is flawed, the line stops automatically before the product ships."
+    try:
+        # Initialize the official Google GenAI client
+        client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
+        
+        # Give the AI strict persona rules to act as a plain-English tutor
+        system_prompt = (
+            f"You are an elite, supportive MLOps instructor teaching a student about '{active_module}' on Databricks.\n"
+            f"The student is currently reading this specific source material:\n"
+            f"--- \n{module_markdown_content}\n ---\n"
+            "Your goal is to answer their questions using incredibly clear, plain English. "
+            "Avoid massive walls of complex code unless explicitly asked. "
+            "Use vibrant, real-world analogies (like kitchens, factories, or assembly lines) to explain abstract ideas."
         )
         
-    # Rule 3: Default fallback instructor response
-    else:
-        return (
-            f"That is a great question regarding **{active_module}**. "
-            "To wrap your head around this concept in plain English, just remember that its main job "
-            "is to make your machine learning workflow predictable, repeatable, and safe for production apps."
+        # Generate the response using the fast, intelligent flash model
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=user_text,
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                temperature=0.7,
+            )
         )
+        return response.text
+    except Exception as e:
+        return f"❌ Error communicating with AI Tutor: {str(e)}"
 
 # --- APP SYSTEM STATE TRACKER ---
 discovered_coursework = discover_modules()
@@ -167,9 +173,8 @@ with tab_chat:
         if st.form_submit_button("Submit Question") and input_text.strip():
             track_history.append({"role": "user", "content": input_text})
             
-            # Context-aware simulated assistant logic
-            simulated_response = get_ai_response(input_text, st.session_state.active_track)
-            #simulated_response = f"Analyzing your inquiry regarding **{st.session_state.active_track}**: Conceptually, this phase removes complexity and human error. It creates an isolated, automated safety layer so your system runs without manual friction."
+            # CALL THE NEW UPDATED ENGINE (passing markdown_body from Tab 1)
+            simulated_response = get_ai_response(input_text, st.session_state.active_track, markdown_body)
             
             track_history.append({"role": "assistant", "content": simulated_response})
             st.rerun()
